@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 
 const authRoutes = require("./routes/authRoutes");
+const protect = require("./middleware/authMiddleware");
 
 const app = express();
 
@@ -9,10 +10,10 @@ app.use(cors());
 
 app.use(express.json());
 
-app.get("/api/health", (req, res) => {
+app.get("/api/auth/me", protect, (req, res) => {
   res.status(200).json({
     success: true,
-    message: "Realtime chat API is running...",
+    userId: req.user,
   });
 });
 
