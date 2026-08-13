@@ -16,6 +16,6 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-app.use("/api/auth/", authRoutes);
+app.use("/api/auth", authRoutes);
 
 module.exports = app;
