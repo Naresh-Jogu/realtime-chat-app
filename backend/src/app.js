@@ -3,6 +3,7 @@ const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const conversationRoutes = require("./routes/conversationRoutes");
+const messageRoutes = require("./routes/messageRoutes");
 const protect = require("./middleware/authMiddleware");
 
 const app = express();
@@ -21,5 +22,6 @@ app.get("/api/auth/me", protect, (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/conversations", conversationRoutes);
+app.use("/api/conversations", messageRoutes);
 
 module.exports = app;
