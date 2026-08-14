@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const Conversation = require("../models/Conversation");
+const Message = require("../models/Message")
 
 const createConversation = async (req, res) => {
   try {
@@ -59,4 +60,26 @@ const createConversation = async (req, res) => {
   }
 };
 
-module.exports = { createConversation };
+const getMyConversations = async (req, res) => {
+  try {
+    const conversations = await Conversation.find({
+      participants: req.user,
+    })
+      .populate("participants", "name email avatar isOnline lastSeen")
+      .populate("lastMessage", "senderId content messageType status createdAt")
+      .sort({ updatedAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      conversations,
+    });
+  } catch (error) {
+    console.error("Get conversations error:", error.message);
+
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+};
+
+module.exports = { createConversation, getMyConversations };
