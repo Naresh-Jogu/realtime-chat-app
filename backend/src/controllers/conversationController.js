@@ -37,7 +37,7 @@ const createConversation = async (req, res) => {
     if (existingConversation) {
       return res.status(200).json({
         success: true,
-        Conversation: existingConversation,
+        conversation: existingConversation,
       });
     }
 

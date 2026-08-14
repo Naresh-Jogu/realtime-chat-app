@@ -24,4 +24,21 @@ const getCurrentUser = async (req, res) => {
   }
 };
 
-module.exports = { getCurrentUser };
+const getUsers = async (req, res) => {
+  try {
+    const users = await User.find({
+      _id: { $ne: req.user },
+    }).select("name email avatar isOnline, lastSeen");
+
+    return res.status(200).json({ success: true, users });
+  } catch (error) {
+    console.error("Get users error:", error.message);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+module.exports = { getCurrentUser, getUsers };
