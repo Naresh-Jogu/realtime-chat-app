@@ -6,6 +6,7 @@ const socketAuth = require("./sockets/socketAuth");
 
 const app = require("./app");
 const connectDB = require("./config/db");
+const registerSocketHandlers = require("./sockets/socketHandlers");
 
 const PORT = process.env.PORT || 5000;
 
@@ -26,6 +27,8 @@ const startServer = async () => {
   io.on("connection", (socket) => {
     console.log(`Socket connected: ${socket.id}`);
     console.log(`Authenticated user: ${socket.userId}`);
+
+    registerSocketHandlers(io, socket);
 
     socket.on("disconnect", () => {
       console.log(`Socket disconnected: ${socket.id}`);
