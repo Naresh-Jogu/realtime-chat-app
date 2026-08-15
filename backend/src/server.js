@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const http = require("http");
 const { Server } = require("socket.io");
+const socketAuth = require("./sockets/socketAuth");
 
 const app = require("./app");
 const connectDB = require("./config/db");
@@ -20,11 +21,14 @@ const startServer = async () => {
     },
   });
 
+  io.use(socketAuth);
+
   io.on("connection", (socket) => {
     console.log(`Socket connected: ${socket.id}`);
+    console.log(`Authenticated user: ${socket.userId}`);
 
     socket.on("disconnect", () => {
-      console.log(`Socket Connected: ${socket.id}`);
+      console.log(`Socket disconnected: ${socket.id}`);
     });
   });
 
