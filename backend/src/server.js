@@ -7,6 +7,8 @@ const socketAuth = require("./sockets/socketAuth");
 const app = require("./app");
 const connectDB = require("./config/db");
 const registerSocketHandlers = require("./sockets/socketHandlers");
+const { addConnection, removeConnection } = require("./services/presenceService");
+const { markUserOnline, markUserOffline } = require("./services/userPresenceService");
 
 const PORT = process.env.PORT || 5000;
 
@@ -24,14 +26,30 @@ const startServer = async () => {
 
   io.use(socketAuth);
 
-  io.on("connection", (socket) => {
+  io.on("connection", async (socket) => {
     console.log(`Socket connected: ${socket.id}`);
     console.log(`Authenticated user: ${socket.userId}`);
 
-    registerSocketHandlers(io, socket);
+    const connectionCount = addConnection(socket.userId, socket.id);
 
-    socket.on("disconnect", () => {
+     // Only mark the user online on their first active connection
+    if(connectionCount === 1){
+      await markUserOnline(socket.userId)
+    }
+
+    registerSocketHandlers(io, socket);
+    
+
+    socket.on("disconnect", async () => {
       console.log(`Socket disconnected: ${socket.id}`);
+
+      const remaingConnections = removeConnection(socket.userId, socket.id)
+
+      if(remaingConnections === 0){
+        await markUserOffline(socket.userId)
+      }
+
+
     });
   });
 
