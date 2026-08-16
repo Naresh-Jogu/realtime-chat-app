@@ -5,10 +5,13 @@ const markUserOnline = async (userId) => {
 };
 
 const markUserOffline = async (userId) => {
+  const lastSeen = new Date();
   await User.findByIdAndUpdate(userId, {
     isOnline: false,
-    lastSeen: new Date(),
+    lastSeen,
   });
+
+  return lastSeen;
 };
 
 module.exports = { markUserOnline, markUserOffline };
